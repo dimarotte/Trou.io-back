@@ -1,0 +1,10 @@
+appName: back
+namespace: groupe1
+image:
+  repository: node
+  tag: 1.0.0
+service:
+  port: 80
+containerPort: 2567
+
+host: back-team1.rozvictor.fr
