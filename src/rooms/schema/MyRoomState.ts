@@ -9,7 +9,7 @@ class Item extends Schema {
   @type("number") y: number;
 }
 
-class Player extends Schema {
+export class Player extends Schema {
   @type("string") name: string;
   @type("string") id: string;
   @type("number") radius: number;
@@ -25,8 +25,8 @@ class Map extends Schema {
 
 export class MyRoomState extends Schema {
 
-  @type({ map: Player }) player = new MapSchema<Player>();
-  @type({ map: Item }) item = new MapSchema<Item>();
+  @type({ map: Player }) players = new MapSchema<Player>();
+  @type({ map: Item }) items = new MapSchema<Item>();
   @type(Map) map = new Map();
 
 }

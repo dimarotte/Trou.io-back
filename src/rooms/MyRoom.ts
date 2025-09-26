@@ -1,18 +1,17 @@
 import { Room, Client } from "@colyseus/core";
-import { MyRoomState } from "./schema/MyRoomState";
+import { MyRoomState , Player} from "./schema/MyRoomState";
 
 export class MyRoom extends Room<MyRoomState> {
-  // maxClients = 4;
-  // state = new MyRoomState();
+  maxClients = 4;
+  state = new MyRoomState();
   
   onCreate (options: any) {
-    this.setState(new MyRoomState());
 
     this.onMessage("move", (client, message) => {
       const player = this.state.players.get(client.sessionId); 
       if (player) {
-        player.x += data.x;
-        player.y += data.y;
+        player.x = message.x;
+        player.y = message.y;
       }
     });
 
