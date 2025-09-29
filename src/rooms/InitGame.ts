@@ -40,7 +40,28 @@ function randompos(myroom: MyRoom): { x: number; y: number } {
     return { x, y };
 }
 
-export function StartGame() {
-    //initialise position joueur et position cube
+function addItem(myroom : MyRoom){ //fonction qui ajoute un item a mapschema -> taille random et position random (grace a randompos())
+    
+}
 
+export function StartGame(myroom :MyRoom) {
+    const maxcube= 100;
+    //initialise position joueur et position cube
+    for (const player of myroom.state.players.values()) {
+        player.x=0;
+        player.y=0;
+    }
+    for (let i=0;i<maxcube;i++) {
+        addItem(myroom);
+    }
+    for (const player of myroom.state.players.values()) {
+        const pos=randompos(myroom);
+        player.x=pos.x;
+        player.y=pos.y;
+    }
+    for (const item of myroom.state.items.values()) {
+        const pos=randompos(myroom);
+        item.x=pos.x;
+        item.y=pos.y;
+    }
 }
