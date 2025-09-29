@@ -1,6 +1,6 @@
 import { Schema, MapSchema,type } from "@colyseus/schema";
 
-class Item extends Schema {
+export class Item extends Schema {
   @type("number") width: number;
   @type("number") height: number;
   @type("number") point: number = 0;
@@ -18,7 +18,7 @@ export class Player extends Schema {
   @type("number") y: number;
 }
 
-class Map extends Schema {
+export class Map extends Schema {
   @type("number") max_height: number;
   @type("number") max_width: number;
 }

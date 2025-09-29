@@ -1,18 +1,19 @@
 import { Room, Client } from "@colyseus/core";
 import { MyRoomState, Player } from "./schema/MyRoomState";
+import {StartGame} from "./InitGame";
 
 export class MyRoom extends Room<MyRoomState> {
   maxClients = 4;
   state = new MyRoomState();
   onCreate(options: any) {
 
-    this.onMessage("startGame", (client, message) => {
+    this.onMessage("startgame", (client, message) => {
       const player = this.state.players.get(client.sessionId);
       if (player === this.state.owner) {
-        this.StartGame();
+        StartGame();
       }
     });
-    
+
     this.onMessage("move", (client, message) => {
       const player = this.state.players.get(client.sessionId);
       if (player) {
@@ -32,7 +33,7 @@ export class MyRoom extends Room<MyRoomState> {
       this.state.owner = newPlayer;
     }
     else if (this.state.players.size === 5) {
-      this.StartGame();
+      StartGame();
     }
   }
 
@@ -45,7 +46,4 @@ export class MyRoom extends Room<MyRoomState> {
     console.log("room", this.roomId, "disposing...");
   }
 
-  StartGame() {
-
-  }
 }
