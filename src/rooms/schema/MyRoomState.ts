@@ -24,9 +24,8 @@ class Map extends Schema {
 }
 
 export class MyRoomState extends Schema {
-
+  @type(Player) owner: Player | null = null;
   @type({ map: Player }) players = new MapSchema<Player>();
   @type({ map: Item }) items = new MapSchema<Item>();
   @type(Map) map = new Map();
-
 }
