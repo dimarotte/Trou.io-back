@@ -1,0 +1,13 @@
+image: node
+
+stages:
+  - lint
+
+eslint:
+  stage: lint
+  script: 
+    - npm i eslint
+    - npx eslint .
+  only:
+    - merge_requests
+    - pushes
