@@ -58,7 +58,7 @@ export class MyRoom extends Room<MyRoomState> {
       this.state.owner = newPlayer;
     }
     else if (this.state.players.size === 5) {
-      StartGame();
+      StartGame(this);
     }
   }
 

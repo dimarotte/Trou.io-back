@@ -1,10 +1,8 @@
 import { MyRoom } from "./MyRoom";
-
+import {Item} from "./schema/MyRoomState"
 function getRandomInt(min: number, max: number): number {
     min = Math.ceil(min);
     max = Math.floor(max);
-    // Math.random() génère un float entre 0 (inclus) et 1 (exclus)
-    // On multiplie par la plage (max - min + 1) et on ajoute min
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
@@ -40,7 +38,26 @@ function randompos(myroom: MyRoom): { x: number; y: number } {
     return { x, y };
 }
 
-export function StartGame() {
-    //initialise position joueur et position cube
+function addItem(id : string,myroom: MyRoom) { //fonction qui ajoute un item a mapschema -> taille random et position random (grace a randompos())
+    const item = new Item();
+    item.color="#FF0000";
+    item.point=5;
+    item.height=10;
+    item.width=10;
+    const pos = randompos(myroom);
+    item.x=pos.x;
+    item.y=pos.y;
+    myroom.state.items.set(id,item);
+}
 
+export function StartGame(myroom: MyRoom) {
+    const maxcube = 5
+    for (let i = 0; i < maxcube; i++) {
+        addItem(i.toString(),myroom);
+    }
+    for (const player of myroom.state.players.values()) {
+        const pos = randompos(myroom);
+        player.x = pos.x;
+        player.y = pos.y;
+    }
 }
