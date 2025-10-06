@@ -11,7 +11,7 @@ export class MyRoom extends Room<MyRoomState> {
     this.onMessage("startGame", (client, message) => {
       const player = this.state.players.get(client.sessionId);
       if (player === this.state.owner) {
-        StartGame();
+        StartGame(this);
       }
     });
 
