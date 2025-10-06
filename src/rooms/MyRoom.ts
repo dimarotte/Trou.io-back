@@ -1,5 +1,5 @@
 import { Room, Client } from "@colyseus/core";
-import { MyRoomState, Player } from "./schema/MyRoomState";
+import { MyRoomState, Player, User } from "./schema/MyRoomState";
 import { StartGame } from "./InitGame";
 import { CheckEatPlayer, CheckEatItem } from "./AntiCheat";
 
@@ -9,8 +9,8 @@ export class MyRoom extends Room<MyRoomState> {
   onCreate(options: any) {
 
     this.onMessage("startGame", (client, message) => {
-      const player = this.state.players.get(client.sessionId);
-      if (player === this.state.owner) {
+      const user = this.state.users.get(client.sessionId);
+      if (user === this.state.owner) {
         StartGame(this);
       }
     });
@@ -51,20 +51,23 @@ export class MyRoom extends Room<MyRoomState> {
 
   onJoin(client: Client, options: any) {
     console.log(client.sessionId, "joined!");
-    const newPlayer = new Player();
-    newPlayer.name = options.name || "Guest";
-    this.state.players.set(client.sessionId, newPlayer);
+    const newUser = new User();
+    newUser.name = options.name || "Guest";
+    this.state.users.set(client.sessionId, newUser);
     if (this.state.players.size === 1) {
-      this.state.owner = newPlayer;
+      this.state.owner = newUser;
     }
-    else if (this.state.players.size === 5) {
+    else if (this.state.players.size === 4) {
       StartGame(this);
     }
   }
 
   onLeave(client: Client, consented: boolean) {
     console.log(client.sessionId, "left!");
-    this.state.players.delete(client.sessionId);
+    this.state.users.delete(client.sessionId);
+    if (this.state.etat === "playing" && this.state.players.has(client.sessionId)) {
+      this.state.players.delete(client.sessionId);
+    }
   }
 
   onDispose() {
