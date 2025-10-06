@@ -1,16 +1,17 @@
 import { Room, Client } from "@colyseus/core";
 import { MyRoomState, Player } from "./schema/MyRoomState";
-import {StartGame} from "./InitGame";
+import { StartGame } from "./InitGame";
+import { CheckEatPlayer, CheckEatItem } from "./AntiCheat";
 
 export class MyRoom extends Room<MyRoomState> {
   maxClients = 4;
   state = new MyRoomState();
   onCreate(options: any) {
 
-    this.onMessage("startgame", (client, message) => {
+    this.onMessage("startGame", (client, message) => {
       const player = this.state.players.get(client.sessionId);
-      if (player === this.state.owner && this.state.items.size === 0) {
-        StartGame(this);
+      if (player === this.state.owner) {
+        StartGame();
       }
     });
 
@@ -21,7 +22,30 @@ export class MyRoom extends Room<MyRoomState> {
         player.y = message.y;
       }
     });
-    
+
+    this.onMessage("playerEat", (client, message) => {
+      const player = this.state.players.get(client.sessionId);
+      const target = this.state.players.get(message.targetId);
+      if (player && target) {
+        if (CheckEatPlayer(target, player)) {
+          player.radius += target.radius * 0.2;
+          player.score += target.score;
+          this.state.players.delete(message.targetId);
+        }
+      }
+    });
+
+    this.onMessage("itemEat", (client, message) => {
+      const player = this.state.players.get(client.sessionId);
+      const item = this.state.items.get(message.itemId);
+      if (player && item) {
+        if (CheckEatItem(item, player)) {
+          player.radius += item.width * 0.2;
+          player.score += 1;
+          this.state.items.delete(message.itemId);
+        }
+      }
+    });
 
   }
 

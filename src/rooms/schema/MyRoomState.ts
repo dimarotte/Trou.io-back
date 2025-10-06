@@ -1,4 +1,4 @@
-import { Schema, MapSchema,type } from "@colyseus/schema";
+import { Schema, MapSchema, type } from "@colyseus/schema";
 
 export class Item extends Schema {
   @type("string") id: string;

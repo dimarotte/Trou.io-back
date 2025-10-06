@@ -3,6 +3,11 @@ image: node
 stages:
   - lint
 
+cache:
+  key: node_modules
+  paths:
+    - node_modules/
+
 eslint:
   stage: lint
   script: 
