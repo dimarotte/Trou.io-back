@@ -29,4 +29,5 @@ export class MyRoomState extends Schema {
   @type({ map: Player }) players = new MapSchema<Player>();
   @type({ map: Item }) items = new MapSchema<Item>();
   @type(Map) map = new Map();
+  @type(String) etat : String | null = null;
 }

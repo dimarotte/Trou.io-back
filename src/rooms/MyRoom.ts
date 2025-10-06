@@ -9,7 +9,7 @@ export class MyRoom extends Room<MyRoomState> {
 
     this.onMessage("startgame", (client, message) => {
       const player = this.state.players.get(client.sessionId);
-      if (player === this.state.owner) {
+      if (player === this.state.owner && this.state.items.size === 0) {
         StartGame(this);
       }
     });
@@ -21,6 +21,7 @@ export class MyRoom extends Room<MyRoomState> {
         player.y = message.y;
       }
     });
+    
 
   }
 
