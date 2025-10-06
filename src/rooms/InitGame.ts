@@ -3,8 +3,6 @@ import {Item} from "./schema/MyRoomState"
 function getRandomInt(min: number, max: number): number {
     min = Math.ceil(min);
     max = Math.floor(max);
-    // Math.random() génère un float entre 0 (inclus) et 1 (exclus)
-    // On multiplie par la plage (max - min + 1) et on ajoute min
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
@@ -53,11 +51,7 @@ function addItem(id : string,myroom: MyRoom) { //fonction qui ajoute un item a m
 }
 
 export function StartGame(myroom: MyRoom) {
-    const maxcube = 100;
-    for (const player of myroom.state.players.values()) {
-        player.x = 0;
-        player.y = 0;
-    }
+    const maxcube = 5
     for (let i = 0; i < maxcube; i++) {
         addItem(i.toString(),myroom);
     }

@@ -6,8 +6,8 @@ export class Item extends Schema {
   @type("number") height: number;
   @type("number") point: number = 0;
   @type("string") color: string;
-  @type("number") x: number;
-  @type("number") y: number;
+  @type("number") x: number = 0;
+  @type("number") y: number = 0;
 }
 
 export class Player extends Schema {
@@ -15,13 +15,13 @@ export class Player extends Schema {
   @type("string") id: string;
   @type("number") radius: number;
   @type("number") score: number;
-  @type("number") x: number;
-  @type("number") y: number;
+  @type("number") x: number = 0;
+  @type("number") y: number = 0;
 }
 
 export class Map extends Schema {
-  @type("number") max_height: number;
-  @type("number") max_width: number;
+  @type("number") max_height: number = 1000;
+  @type("number") max_width: number = 1000;
 }
 
 export class MyRoomState extends Schema {
