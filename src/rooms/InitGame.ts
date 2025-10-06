@@ -1,5 +1,5 @@
 import { MyRoom } from "./MyRoom";
-import {Item} from "./schema/MyRoomState"
+import {Item, Player} from "./schema/MyRoomState"
 function getRandomInt(min: number, max: number): number {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -51,6 +51,15 @@ function addItem(id : string,myroom: MyRoom) { //fonction qui ajoute un item a m
 }
 
 export function StartGame(myroom: MyRoom) {
+    myroom.state.etat="playing";
+    for (const user of myroom.state.users.values()) {
+        const newPlayer = new Player();
+        newPlayer.id = user.id;
+        newPlayer.name = user.name;
+        newPlayer.radius = 10;
+        newPlayer.score = 0;
+        myroom.state.players.set(user.id, newPlayer);
+    }
     const maxcube = 5
     for (let i = 0; i < maxcube; i++) {
         addItem(i.toString(),myroom);

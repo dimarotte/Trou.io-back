@@ -17,6 +17,7 @@ export class Player extends Schema {
   @type("number") score: number;
   @type("number") x: number = 0;
   @type("number") y: number = 0;
+  @type("boolean") isAlive: boolean = true;
 }
 
 export class Map extends Schema {
@@ -24,10 +25,16 @@ export class Map extends Schema {
   @type("number") max_width: number = 1000;
 }
 
+export class User extends Schema {
+  @type("string") id: string;
+  @type("string") name: string;
+}
+
 export class MyRoomState extends Schema {
-  @type(Player) owner: Player | null = null;
+  @type(User) owner: User | null = null;
+  @type({ map: User }) users = new MapSchema<User>();
   @type({ map: Player }) players = new MapSchema<Player>();
   @type({ map: Item }) items = new MapSchema<Item>();
   @type(Map) map = new Map();
-  @type(String) etat : String | null = null;
+  @type(String) etat : String = "waiting"; 
 }
