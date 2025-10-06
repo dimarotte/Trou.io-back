@@ -17,6 +17,7 @@ export class Player extends Schema {
   @type("number") score: number;
   @type("number") x: number = 0;
   @type("number") y: number = 0;
+  @type("boolean") isAlive: boolean = true;
 }
 
 export class Map extends Schema {

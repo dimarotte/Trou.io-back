@@ -30,7 +30,7 @@ export class MyRoom extends Room<MyRoomState> {
         if (CheckEatPlayer(target, player)) {
           player.radius += target.radius * 0.2;
           player.score += target.score;
-          this.state.players.delete(message.targetId);
+          target.isAlive = false;
         }
       }
     });
