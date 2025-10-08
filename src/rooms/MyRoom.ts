@@ -1,6 +1,6 @@
 import { Room, Client } from "@colyseus/core";
 import { MyRoomState, Player, User } from "./schema/MyRoomState";
-import { StartGame } from "./InitGame";
+import { startGame as startGame } from "./InitGame";
 import { CheckEatPlayer, CheckEatItem } from "./AntiCheat";
 
 export class MyRoom extends Room<MyRoomState> {
@@ -11,7 +11,7 @@ export class MyRoom extends Room<MyRoomState> {
     this.onMessage("startGame", (client, message) => {
       const user = this.state.users.get(client.sessionId);
       if (user === this.state.owner) {
-        StartGame(this);
+        startGame(this);
       }
     });
 
@@ -51,14 +51,19 @@ export class MyRoom extends Room<MyRoomState> {
 
   onJoin(client: Client, options: any) {
     console.log(client.sessionId, "joined!");
+
     const newUser = new User();
+    newUser.id = client.sessionId;
     newUser.name = options.name || "Guest";
+
     this.state.users.set(client.sessionId, newUser);
-    if (this.state.players.size === 1) {
+
+    // The first user to join becomes the owner
+    if (this.state.users.size === 1) {
       this.state.owner = newUser;
     }
-    else if (this.state.players.size === 4) {
-      StartGame(this);
+    else if (this.state.users.size === 4) {
+      startGame(this);
     }
   }
 
@@ -73,5 +78,4 @@ export class MyRoom extends Room<MyRoomState> {
   onDispose() {
     console.log("room", this.roomId, "disposing...");
   }
-
 }

@@ -1,5 +1,5 @@
 import { MyRoom } from "./MyRoom";
-import {Item, Player} from "./schema/MyRoomState"
+import { Item, Player } from "./schema/MyRoomState"
 function getRandomInt(min: number, max: number): number {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -38,20 +38,21 @@ function randompos(myroom: MyRoom): { x: number; y: number } {
     return { x, y };
 }
 
-function addItem(id : string,myroom: MyRoom) { //fonction qui ajoute un item a mapschema -> taille random et position random (grace a randompos())
+function addItem(id: string, myroom: MyRoom) { //fonction qui ajoute un item a mapschema -> taille random et position random (grace a randompos())
     const item = new Item();
-    item.color="#FF0000";
-    item.point=5;
-    item.height=10;
-    item.width=10;
+    item.id = id;
+    item.color = "#FF0000";
+    item.point = 5;
+    item.height = 10;
+    item.width = 10;
     const pos = randompos(myroom);
-    item.x=pos.x;
-    item.y=pos.y;
-    myroom.state.items.set(id,item);
+    item.x = pos.x;
+    item.y = pos.y;
+    myroom.state.items.set(id, item);
 }
 
-export function StartGame(myroom: MyRoom) {
-    myroom.state.etat="playing";
+export function startGame(myroom: MyRoom) {
+    myroom.state.etat = "playing";
     for (const user of myroom.state.users.values()) {
         const newPlayer = new Player();
         newPlayer.id = user.id;
@@ -62,7 +63,7 @@ export function StartGame(myroom: MyRoom) {
     }
     const maxcube = 5
     for (let i = 0; i < maxcube; i++) {
-        addItem(i.toString(),myroom);
+        addItem(i.toString(), myroom);
     }
     for (const player of myroom.state.players.values()) {
         const pos = randompos(myroom);
