@@ -14,16 +14,16 @@ export class MyRoom extends Room<MyRoomState> {
       msg.senderName = this.state.users.get(client.sessionId)?.name || "Unknown";
       msg.message = message.data;
       msg.timestamp = Date.now();
-      if (this.state.chatMessages.length > 50) {
-        this.state.chatMessages.shift(); // Supprime le plus vieux message
+      if (this.state.chat.length > 50) {
+        this.state.chat.shift(); // Supprime le plus vieux message
       }
-      if(this.state.chat.size > 0){
-        const lastmsg=this.state.chat[this.state.chat.chat.length-1];
+      if(this.state.chat.length > 0){
+        const lastmsg=this.state.chat[this.state.chat.length-1];
         if (msg.senderId === lastmsg.senderId && msg.timestamp - lastmsg.timestamp < 1000){
           return;
         }
       }
-      this.state.chat.set(msg);
+      this.state.chat.push(msg);
       
     });
 
