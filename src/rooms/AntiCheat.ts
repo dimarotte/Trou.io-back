@@ -7,7 +7,7 @@ export function checkEatPlayer(target: Player, player: Player): boolean {
         return false;
 }
 
-function distance(x1: number, y1: number, x2: number, y2: number): number {
+export function distance(x1: number, y1: number, x2: number, y2: number): number {
     return ((x1 - x2)**2 + (y1 - y2)**2)**0.5;
 }
 
