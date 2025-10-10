@@ -72,14 +72,26 @@ function randomPoint(): number {
 }
 
 
+function deductHeight(point: number): number {
+    const height = point - (point * 0.3);
+    return height;
+}
+
+function deductWidth(point: number): number {
+    const width = point - (point * 0.3);
+    return width;
+}
+
+
+
 
 function addItem(id: string, myroom: MyRoom) { //fonction qui ajoute un item a mapschema -> taille random et position random (grace a randompos())
     const item = new Item();
     item.id = id;
     item.color = "#FF0000";
     item.point = randomPoint();
-    item.height = 10;
-    item.width = 10;
+    item.height = deductHeight(item.point);
+    item.width = deductWidth(item.point);
     const pos = randompos(myroom, item.height, item.width);
     item.x = pos.x;
     item.y = pos.y;
