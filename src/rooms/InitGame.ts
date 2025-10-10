@@ -9,16 +9,16 @@ function getRandomInt(min: number, max: number): number {
 
 function hasCollisionWithPlayers(x: number, y: number, height: number, width: number, myroom: MyRoom): boolean {
     for (const player of myroom.state.players.values()) {
-        if (distance(x, y, player.x, player.y) <  player.radius) {
+        if (distance(x, y, player.x, player.y) < player.radius) {
             return true;
         }
-        if (distance(x + width, y, player.x, player.y) <  player.radius) {
+        if (distance(x + width, y, player.x, player.y) < player.radius) {
             return true;
         }
-        if (distance(x, y + height, player.x, player.y) <  player.radius) {
+        if (distance(x, y + height, player.x, player.y) < player.radius) {
             return true;
         }
-        if (distance(x + width, y + height, player.x, player.y) <  player.radius) {
+        if (distance(x + width, y + height, player.x, player.y) < player.radius) {
             return true;
         }
     }
@@ -27,16 +27,16 @@ function hasCollisionWithPlayers(x: number, y: number, height: number, width: nu
 
 function hasCollisionWithItems(x: number, y: number, height: number, width: number, myroom: MyRoom): boolean {
     for (const item of myroom.state.items.values()) {
-        if ( x === item.x && y === item.y ) {
+        if (x === item.x && y === item.y) {
             return true;
         }
-        if ( x + width === item.x && y === item.y ) {
+        if (x + width === item.x && y === item.y) {
             return true;
         }
-        if ( x === item.x && y + height === item.y ) {
+        if (x === item.x && y + height === item.y) {
             return true;
         }
-        if ( x + width === item.x && y + height === item.y ) {
+        if (x + width === item.x && y + height === item.y) {
             return true;
         }
 
@@ -44,7 +44,7 @@ function hasCollisionWithItems(x: number, y: number, height: number, width: numb
     return false;
 }
 
-function randompos(myroom: MyRoom,height: number,width: number): { x: number; y: number } {
+function randompos(myroom: MyRoom, height: number, width: number): { x: number; y: number } {
     let notpossible: boolean;
     let x: number;
     let y: number;
@@ -55,7 +55,7 @@ function randompos(myroom: MyRoom,height: number,width: number): { x: number; y:
         notpossible = false;
 
         // Vérifie collision avec joueurs
-       notpossible = hasCollisionWithPlayers(x, y, height, width, myroom);
+        notpossible = hasCollisionWithPlayers(x, y, height, width, myroom);
 
         // Vérifie collision avec items
         if (!notpossible) {
@@ -82,13 +82,19 @@ function deductWidth(point: number): number {
     return width;
 }
 
-
-
+function randomColor(): string {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
 
 function addItem(id: string, myroom: MyRoom) { //fonction qui ajoute un item a mapschema -> taille random et position random (grace a randompos())
     const item = new Item();
     item.id = id;
-    item.color = "#FF0000";
+    item.color = randomColor();
     item.point = randomPoint();
     item.height = deductHeight(item.point);
     item.width = deductWidth(item.point);
