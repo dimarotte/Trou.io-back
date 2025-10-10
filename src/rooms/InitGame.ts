@@ -45,7 +45,7 @@ function hasCollisionWithItems(x: number, y: number, height: number, width: numb
 }
 
 function hasOutOfBounds(x: number, y: number, height: number, width: number, myroom: MyRoom): boolean {
-    if (x < 0 || y < 0 || x + width > myroom.state.map.max_width || y + height > myroom.state.map.max_height) {
+    if (x < 1 || y < 1 || x + width > myroom.state.map.max_width || y + height > myroom.state.map.max_height) {
         return true;
     }
     return false;
@@ -128,7 +128,7 @@ export function startGame(myroom: MyRoom) {
         newPlayer.score = 0;
         myroom.state.players.set(user.id, newPlayer);
     }
-    const maxcube = 50
+    const maxcube = 50;
     for (let i = 0; i < maxcube; i++) {
         addItem(i.toString(), myroom);
     }
