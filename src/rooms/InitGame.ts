@@ -86,12 +86,12 @@ function randomPoint(): number {
 
 
 function deductHeight(point: number): number {
-    const height = point - (point * 0.3);
+    const height = 2*point - (point * 0.3);
     return height;
 }
 
 function deductWidth(point: number): number {
-    const width = point - (point * 0.3);
+    const width = 2*point - (point * 0.3);
     return width;
 }
 
