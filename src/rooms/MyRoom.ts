@@ -8,6 +8,9 @@ export class MyRoom extends Room<MyRoomState> {
   state = new MyRoomState();
   onCreate(options: any) {
 
+    this.onMessage("chat", (client, message) => {
+    });
+
     this.onMessage("startGame", (client, message) => {
       const user = this.state.users.get(client.sessionId);
       if (user === this.state.owner) {
