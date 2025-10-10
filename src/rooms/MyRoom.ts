@@ -1,7 +1,7 @@
 import { Room, Client } from "@colyseus/core";
 import { MyRoomState, Player, User } from "./schema/MyRoomState";
-import { startGame as startGame } from "./InitGame";
-import { CheckEatPlayer, CheckEatItem } from "./AntiCheat";
+import { startGame } from "./InitGame";
+import { checkEatPlayer, checkEatItem , checkPlayerOutOfBounds} from "./AntiCheat";
 
 export class MyRoom extends Room<MyRoomState> {
   maxClients = 4;
@@ -18,8 +18,14 @@ export class MyRoom extends Room<MyRoomState> {
     this.onMessage("move", (client, message) => {
       const player = this.state.players.get(client.sessionId);
       if (player) {
-        player.x = message.x;
-        player.y = message.y;
+        if (checkPlayerOutOfBounds(message.x, message.y, player.radius, this.state.map)) {
+          //stop movement if out of bounds
+          return;
+        }
+        else {
+          player.x = message.x;
+          player.y = message.y;
+        }
       }
     });
 
@@ -27,7 +33,7 @@ export class MyRoom extends Room<MyRoomState> {
       const player = this.state.players.get(client.sessionId);
       const target = this.state.players.get(message.targetId);
       if (player && target) {
-        if (CheckEatPlayer(target, player)) {
+        if (checkEatPlayer(target, player)) {
           player.radius += target.radius * 0.2;
           player.score += target.score;
           target.isAlive = false;
@@ -39,7 +45,7 @@ export class MyRoom extends Room<MyRoomState> {
       const player = this.state.players.get(client.sessionId);
       const item = this.state.items.get(message.itemId);
       if (player && item) {
-        if (CheckEatItem(item, player)) {
+        if (checkEatItem(item, player)) {
           player.radius += item.width * 0.2;
           player.score += 1;
           this.state.items.delete(message.itemId);
