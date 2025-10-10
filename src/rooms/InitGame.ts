@@ -44,6 +44,13 @@ function hasCollisionWithItems(x: number, y: number, height: number, width: numb
     return false;
 }
 
+function hasOutOfBounds(x: number, y: number, height: number, width: number, myroom: MyRoom): boolean {
+    if (x < 0 || y < 0 || x + width > myroom.state.map.max_width || y + height > myroom.state.map.max_height) {
+        return true;
+    }
+    return false;
+}
+
 function randompos(myroom: MyRoom, height: number, width: number): { x: number; y: number } {
     let notpossible: boolean;
     let x: number;
@@ -54,13 +61,19 @@ function randompos(myroom: MyRoom, height: number, width: number): { x: number; 
         y = getRandomInt(0, myroom.state.map.max_height);
         notpossible = false;
 
+        // Vérifie hors limites
+        notpossible = hasOutOfBounds(x, y, height, width, myroom);
+
         // Vérifie collision avec joueurs
-        notpossible = hasCollisionWithPlayers(x, y, height, width, myroom);
+        if (!notpossible) {
+            notpossible = hasCollisionWithPlayers(x, y, height, width, myroom);
+        }
 
         // Vérifie collision avec items
         if (!notpossible) {
             notpossible = hasCollisionWithItems(x, y, height, width, myroom);
         }
+
     } while (notpossible);
 
     return { x, y };
