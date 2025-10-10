@@ -1,5 +1,11 @@
 import { Schema, MapSchema, type } from "@colyseus/schema";
 
+export class ChatMessage extends Schema {
+  @type("string") senderId: string;
+  @type("string") senderName: string;
+  @type("string") message: string;
+  @type("number") timestamp: number = Date.now();
+}
 export class Item extends Schema {
   @type("string") id: string;
   @type("number") width: number;
