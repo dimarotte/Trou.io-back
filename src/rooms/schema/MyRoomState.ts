@@ -1,4 +1,4 @@
-import { Schema, MapSchema, type } from "@colyseus/schema";
+import { Schema, MapSchema, type ,ArraySchema} from "@colyseus/schema";
 
 export class ChatMessage extends Schema {
   @type("string") senderId: string;
@@ -41,6 +41,7 @@ export class MyRoomState extends Schema {
   @type({ map: User }) users = new MapSchema<User>();
   @type({ map: Player }) players = new MapSchema<Player>();
   @type({ map: Item }) items = new MapSchema<Item>();
+  @type([ChatMessage]) chatMessages = new ArraySchema<ChatMessage>();
   @type(Map) map = new Map();
   @type("string") etat: string = "waiting"; 
 }
