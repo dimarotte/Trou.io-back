@@ -67,11 +67,17 @@ function randompos(myroom: MyRoom,height: number,width: number): { x: number; y:
 }
 
 
+function randomPoint(): number {
+    return getRandomInt(5, 20);
+}
+
+
+
 function addItem(id: string, myroom: MyRoom) { //fonction qui ajoute un item a mapschema -> taille random et position random (grace a randompos())
     const item = new Item();
     item.id = id;
     item.color = "#FF0000";
-    item.point = 5;
+    item.point = randomPoint();
     item.height = 10;
     item.width = 10;
     const pos = randompos(myroom, item.height, item.width);
