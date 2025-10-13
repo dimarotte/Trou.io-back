@@ -64,8 +64,21 @@ export class MyRoom extends Room<MyRoomState> {
     }
   }
 
-  onLeave(client: Client, consented: boolean) {
+  async onLeave(client: Client, consented: boolean) {
     console.log(client.sessionId, "left!");
+
+    // Autoriser la reconnexion pendant 60 secondes
+    try {
+      if (!consented) {
+        await this.allowReconnection(client, 60);
+        console.log(client.sessionId, "reconnected!");
+        return;
+      }
+    } catch (e) {
+      console.log(client.sessionId, "failed to reconnect");
+    }
+
+    // Si la reconnexion échoue ou si le client a consenti à partir
     this.state.users.delete(client.sessionId);
     if (this.state.etat === "playing" && this.state.players.has(client.sessionId)) {
       this.state.players.delete(client.sessionId);
