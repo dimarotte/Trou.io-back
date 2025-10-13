@@ -1,5 +1,11 @@
-import { Schema, MapSchema, type } from "@colyseus/schema";
+import { Schema, MapSchema, type ,ArraySchema} from "@colyseus/schema";
 
+export class ChatMessage extends Schema {
+  @type("string") senderId: string;
+  @type("string") senderName: string;
+  @type("string") message: string;
+  @type("number") timestamp: number = Date.now();
+}
 export class Item extends Schema {
   @type("string") id: string;
   @type("number") width: number;
@@ -35,6 +41,7 @@ export class MyRoomState extends Schema {
   @type({ map: User }) users = new MapSchema<User>();
   @type({ map: Player }) players = new MapSchema<Player>();
   @type({ map: Item }) items = new MapSchema<Item>();
+  @type([ChatMessage]) chat = new ArraySchema<ChatMessage>();
   @type(Map) map = new Map();
   @type("string") etat: string = "waiting"; 
 }
