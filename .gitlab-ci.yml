@@ -2,6 +2,7 @@ image: node
 
 stages:
   - lint
+  - docker
 
 cache:
   key: node_modules
