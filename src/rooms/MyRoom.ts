@@ -1,12 +1,31 @@
 import { Room, Client } from "@colyseus/core";
-import { MyRoomState, Player, User } from "./schema/MyRoomState";
+import { ChatMessage, MyRoomState, Player, User } from "./schema/MyRoomState";
 import { startGame } from "./InitGame";
-import { checkEatPlayer, checkEatItem , checkPlayerOutOfBounds} from "./AntiCheat";
+import { checkEatPlayer, checkEatItem, checkPlayerOutOfBounds } from "./AntiCheat";
 
 export class MyRoom extends Room<MyRoomState> {
   maxClients = 4;
   state = new MyRoomState();
   onCreate(options: any) {
+
+    this.onMessage("chat", (client, message) => {
+      const msg = new ChatMessage();
+      msg.senderId = client.sessionId;
+      msg.senderName = this.state.users.get(client.sessionId)?.name || "Unknown";
+      msg.message = message.data;
+      msg.timestamp = Date.now();
+      if (this.state.chat.length > 10) {
+        this.state.chat.shift(); // Supprime le plus vieux message
+      }
+      if(this.state.chat.length > 0){
+        const lastmsg=this.state.chat[this.state.chat.length-1];
+        if (msg.senderId === lastmsg.senderId && msg.timestamp - lastmsg.timestamp < 1000){
+          return;
+        }
+      }
+      this.state.chat.push(msg);
+      
+    });
 
     this.onMessage("startGame", (client, message) => {
       const user = this.state.users.get(client.sessionId);
