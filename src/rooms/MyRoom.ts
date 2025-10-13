@@ -14,7 +14,7 @@ export class MyRoom extends Room<MyRoomState> {
       msg.senderName = this.state.users.get(client.sessionId)?.name || "Unknown";
       msg.message = message.data;
       msg.timestamp = Date.now();
-      if (this.state.chat.length > 50) {
+      if (this.state.chat.length > 10) {
         this.state.chat.shift(); // Supprime le plus vieux message
       }
       if(this.state.chat.length > 0){
