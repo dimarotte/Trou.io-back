@@ -19,36 +19,27 @@ export class MyRoom extends Room<MyRoomState> {
       const player = this.state.players.get(client.sessionId);
       if (player) {
         if (checkPlayerOutOfBounds(message.x, message.y, player.radius, this.state.map)) {
-          //stop movement if out of bounds
           return;
         }
         else {
           player.x = message.x;
           player.y = message.y;
-        }
-      }
-    });
-
-    this.onMessage("playerEat", (client, message) => {
-      const player = this.state.players.get(client.sessionId);
-      const target = this.state.players.get(message.targetId);
-      if (player && target) {
-        if (checkEatPlayer(target, player)) {
-          player.radius += target.radius * 0.2;
-          player.score += target.score;
-          target.isAlive = false;
-        }
-      }
-    });
-
-    this.onMessage("itemEat", (client, message) => {
-      const player = this.state.players.get(client.sessionId);
-      const item = this.state.items.get(message.itemId);
-      if (player && item) {
-        if (checkEatItem(item, player)) {
-          player.radius += item.width * 0.2;
-          player.score += 1;
-          this.state.items.delete(message.itemId);
+          for (const item of this.state.items.values()) {
+            if (checkEatItem(item, player)) {
+              player.radius += item.width * 0.2;
+              player.score += item.width / 2;
+              this.state.items.delete(item.id);
+            }
+          }
+          for (const otherPlayer of this.state.players.values()) {
+            if (otherPlayer.id !== player.id && otherPlayer.isAlive) {
+              if (checkEatPlayer(otherPlayer, player)) {
+                player.radius += otherPlayer.radius * 0.2;
+                player.score += otherPlayer.score;
+                otherPlayer.isAlive = false;
+              }
+            }
+          }
         }
       }
     });
