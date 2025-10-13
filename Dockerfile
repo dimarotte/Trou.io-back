@@ -14,10 +14,10 @@ FROM node:18
 
 WORKDIR /app
 
-COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/build ./build
 COPY package*.json ./
 RUN npm install --production
 
 EXPOSE 2567
 
-CMD ["node", "dist/index.js"]
+CMD ["node", "build/index.js"]
