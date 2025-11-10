@@ -1,14 +1,14 @@
 import { distance } from "./AntiCheat";
-import { MyRoom } from "./MyRoom";
-import { Item, Player } from "./schema/MyRoomState"
+import { BaseRoom } from "./BaseRoom";
+import { Item, Player } from "./schema/Schemas"
 function getRandomInt(min: number, max: number): number {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function hasCollisionWithPlayers(x: number, y: number, height: number, width: number, myroom: MyRoom): boolean {
-    for (const player of myroom.state.players.values()) {
+function hasCollisionWithPlayers(x: number, y: number, height: number, width: number, baseroom: BaseRoom): boolean {
+    for (const player of baseroom.state.players.values()) {
         if (distance(x, y, player.x, player.y) < player.radius) {
             return true;
         }
@@ -25,8 +25,8 @@ function hasCollisionWithPlayers(x: number, y: number, height: number, width: nu
     return false;
 }
 
-function hasCollisionWithItems(x: number, y: number, height: number, width: number, myroom: MyRoom): boolean {
-    for (const item of myroom.state.items.values()) {
+function hasCollisionWithItems(x: number, y: number, height: number, width: number, baseroom: BaseRoom): boolean {
+    for (const item of baseroom.state.items.values()) {
         if (x === item.x && y === item.y) {
             return true;
         }
@@ -44,34 +44,34 @@ function hasCollisionWithItems(x: number, y: number, height: number, width: numb
     return false;
 }
 
-function hasOutOfBounds(x: number, y: number, height: number, width: number, myroom: MyRoom): boolean {
-    if (x < 1 || y < 1 || x + width > myroom.state.map.max_width || y + height > myroom.state.map.max_height) {
+function hasOutOfBounds(x: number, y: number, height: number, width: number, baseroom: BaseRoom): boolean {
+    if (x < 1 || y < 1 || x + width > baseroom.state.map.max_width || y + height > baseroom.state.map.max_height) {
         return true;
     }
     return false;
 }
 
-function randompos(myroom: MyRoom, height: number, width: number): { x: number; y: number } {
+function randompos(BaseRoom: BaseRoom, height: number, width: number): { x: number; y: number } {
     let notpossible: boolean;
     let x: number;
     let y: number;
 
     do {
-        x = getRandomInt(0, myroom.state.map.max_width);
-        y = getRandomInt(0, myroom.state.map.max_height);
+        x = getRandomInt(0, BaseRoom.state.map.max_width);
+        y = getRandomInt(0, BaseRoom.state.map.max_height);
         notpossible = false;
 
         // Vérifie hors limites
-        notpossible = hasOutOfBounds(x, y, height, width, myroom);
+        notpossible = hasOutOfBounds(x, y, height, width, BaseRoom);
 
         // Vérifie collision avec joueurs
         if (!notpossible) {
-            notpossible = hasCollisionWithPlayers(x, y, height, width, myroom);
+            notpossible = hasCollisionWithPlayers(x, y, height, width, BaseRoom);
         }
 
         // Vérifie collision avec items
         if (!notpossible) {
-            notpossible = hasCollisionWithItems(x, y, height, width, myroom);
+            notpossible = hasCollisionWithItems(x, y, height, width, BaseRoom);
         }
 
     } while (notpossible);
@@ -104,36 +104,36 @@ function randomColor(): string {
     return color;
 }
 
-function addItem(id: string, myroom: MyRoom) { //fonction qui ajoute un item a mapschema -> taille random et position random (grace a randompos())
+function addItem(id: string, BaseRoom: BaseRoom) { //fonction qui ajoute un item a mapschema -> taille random et position random (grace a randompos())
     const item = new Item();
     item.id = id;
     item.color = randomColor();
     item.point = randomPoint();
     item.height = deductHeight(item.point);
     item.width = deductWidth(item.point);
-    const pos = randompos(myroom, item.height, item.width);
+    const pos = randompos(BaseRoom, item.height, item.width);
     item.x = pos.x;
     item.y = pos.y;
-    myroom.state.items.set(id, item);
+    BaseRoom.state.items.set(id, item);
 }
 
-export function startGame(myroom: MyRoom) {
-    myroom.lock();
-    myroom.state.etat = "playing";
-    for (const user of myroom.state.users.values()) {
+export function startGame(baseroom : BaseRoom) {
+    baseroom.lock();
+    baseroom.state.etat = "playing";
+    for (const user of baseroom.state.users.values()) {
         const newPlayer = new Player();
         newPlayer.id = user.id;
         newPlayer.name = user.name;
         newPlayer.radius = 10;
         newPlayer.score = 0;
-        myroom.state.players.set(user.id, newPlayer);
+        baseroom.state.players.set(user.id, newPlayer);
     }
     const maxcube = 50;
     for (let i = 0; i < maxcube; i++) {
-        addItem(i.toString(), myroom);
+        addItem(i.toString(), baseroom);
     }
-    for (const player of myroom.state.players.values()) {
-        const pos = randompos(myroom, player.radius * 2, player.radius * 2); // verifie le carré englobant du joueur
+    for (const player of baseroom.state.players.values()) {
+        const pos = randompos(baseroom, player.radius * 2, player.radius * 2); // verifie le carré englobant du joueur
         player.x = pos.x;
         player.y = pos.y;
     }

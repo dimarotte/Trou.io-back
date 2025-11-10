@@ -1,19 +1,11 @@
 import { Room, Client } from "@colyseus/core";
-import { MyRoomState, Player, User } from "./schema/MyRoomState";
-import { startGame } from "./InitGame";
+import { BaseRoomState, Player, User } from "./schema/Schemas";
 import { checkEatPlayer, checkEatItem , checkPlayerOutOfBounds} from "./AntiCheat";
 
-export class MyRoom extends Room<MyRoomState> {
+export class BaseRoom extends Room<BaseRoomState> {
   maxClients = 4;
-  state = new MyRoomState();
+  state = new BaseRoomState();
   onCreate(options: any) {
-
-    this.onMessage("startGame", (client, message) => {
-      const user = this.state.users.get(client.sessionId);
-      if (user === this.state.owner) {
-        startGame(this);
-      }
-    });
 
     this.onMessage("move", (client, message) => {
       const player = this.state.players.get(client.sessionId);
@@ -54,14 +46,6 @@ export class MyRoom extends Room<MyRoomState> {
     newUser.name = options.name || "Guest";
 
     this.state.users.set(client.sessionId, newUser);
-
-    // The first user to join becomes the owner
-    if (this.state.users.size === 1) {
-      this.state.owner = newUser;
-    }
-    else if (this.state.users.size === 4) {
-      startGame(this);
-    }
   }
 
   async onLeave(client: Client, consented: boolean) {
