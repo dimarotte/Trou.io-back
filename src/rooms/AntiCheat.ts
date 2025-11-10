@@ -1,4 +1,4 @@
-import { Item, Player,Map } from "./schema/MyRoomState";
+import { Item, Player,Map } from "./schema/Schemas";
 
 export function checkEatPlayer(target: Player, player: Player): boolean {
     if( (distance(target.x, target.y, player.x, player.y) + target.radius < player.radius) )
