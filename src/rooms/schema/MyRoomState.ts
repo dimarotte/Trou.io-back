@@ -30,11 +30,17 @@ export class User extends Schema {
   @type("string") name: string;
 }
 
-export class MyRoomState extends Schema {
-  @type(User) owner: User | null = null;
+export class BaseRoomState extends Schema {
   @type({ map: User }) users = new MapSchema<User>();
   @type({ map: Player }) players = new MapSchema<Player>();
   @type({ map: Item }) items = new MapSchema<Item>();
   @type(Map) map = new Map();
   @type("string") etat: string = "waiting"; 
+}
+
+export class PrivateRoomState extends BaseRoomState{
+   @type(User) owner: User | null = null;
+}
+export class PublicRoomState extends BaseRoomState{
+  @type("number") max_player: number;
 }
