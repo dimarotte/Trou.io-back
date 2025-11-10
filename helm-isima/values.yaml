@@ -1,7 +1,7 @@
 appName: back
 namespace: groupe-trouio
 image:
-  repository: registry.gitlab.com/trou.io/colyseusstarter/frontend
+  repository: registry.gitlab.com/trou.io/colyseusstarter/backend
   tag: main
 service:
   port: 80

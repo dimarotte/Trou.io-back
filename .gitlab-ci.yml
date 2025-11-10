@@ -39,9 +39,9 @@ backend_docker:
       docker buildx build \
         --platform linux/amd64,linux/arm64 \
         --build-arg NG_CONFIG=production \
-        --tag "$CI_REGISTRY_IMAGE/frontend:dev" \
-        --tag "$CI_REGISTRY_IMAGE/frontend:$VERSION" \
-        --tag "$CI_REGISTRY_IMAGE/frontend:${CI_COMMIT_BRANCH}" \
+        --tag "$CI_REGISTRY_IMAGE/backend:dev" \
+        --tag "$CI_REGISTRY_IMAGE/backend:$VERSION" \
+        --tag "$CI_REGISTRY_IMAGE/backend:${CI_COMMIT_BRANCH}" \
         --push \
         .
   needs: [eslint]
