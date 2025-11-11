@@ -1,6 +1,8 @@
 import { distance } from "./AntiCheat";
 import { BaseRoom } from "./BaseRoom";
 import { Item, Player } from "./schema/Schemas"
+
+
 function getRandomInt(min: number, max: number): number {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -86,29 +88,30 @@ function randomPoint(): number {
 
 
 function deductHeight(point: number): number {
-    const height = 2*point - (point * 0.3);
+    const height = 2 * point - (point * 0.3);
     return height;
 }
 
 function deductWidth(point: number): number {
-    const width = 2*point - (point * 0.3);
+    const width = 2 * point - (point * 0.3);
     return width;
 }
 
-function randomColor(): string {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-}
+const PALETTES = [
+    ['#FF6B6B', '#FFD93D', '#6BCB77', '#4D96FF', '#845EC2'], // pop
+    ['#A3D5FF', '#FFB3C1', '#B9FBC0', '#FDE2E4', '#C6DEF1'], // pastel
+    ['#F7A072', '#A9DEF9', '#E4C1F9', '#F9F7A1', '#B5EAD7'], // doux
+];
 
+function randomColor(): string {
+    const index = getRandomInt(0, PALETTES.length - 1);
+    return PALETTES[index][getRandomInt(0, PALETTES[index].length - 1)];
+}
 function addItem(id: string, BaseRoom: BaseRoom) { //fonction qui ajoute un item a mapschema -> taille random et position random (grace a randompos())
     const item = new Item();
     item.id = id;
     item.color = randomColor();
-    item.point = randomPoint();
+    item.point = generateSizeDistribution();
     item.height = deductHeight(item.point);
     item.width = deductWidth(item.point);
     const pos = randompos(BaseRoom, item.height, item.width);
@@ -117,18 +120,18 @@ function addItem(id: string, BaseRoom: BaseRoom) { //fonction qui ajoute un item
     BaseRoom.state.items.set(id, item);
 }
 
-export function startGame(baseroom : BaseRoom) {
+export function startGame(baseroom: BaseRoom) {
     baseroom.lock();
     baseroom.state.etat = "playing";
     for (const user of baseroom.state.users.values()) {
         const newPlayer = new Player();
         newPlayer.id = user.id;
         newPlayer.name = user.name;
-        newPlayer.radius = 10;
+        newPlayer.radius = 20;
         newPlayer.score = 0;
         baseroom.state.players.set(user.id, newPlayer);
     }
-    const maxcube = 50;
+    const maxcube = 200;
     for (let i = 0; i < maxcube; i++) {
         addItem(i.toString(), baseroom);
     }
@@ -138,3 +141,15 @@ export function startGame(baseroom : BaseRoom) {
         player.y = pos.y;
     }
 }
+
+function generateSizeDistribution(): number {
+    // distribution des tailles des items
+    // exponentielle de moyenne 10
+    const lambda = 1 / 10; // plus la lambda est grande, plus les valeurs sont petites
+    const u = Math.random();
+    const size = Math.round(-Math.log(1 - u) / lambda);
+    if (size < 5) return 5;
+    if (size > 500) return 20;
+    return size;
+}
+

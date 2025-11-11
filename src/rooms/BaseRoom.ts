@@ -1,16 +1,15 @@
 import { Room, Client } from "@colyseus/core";
-import { BaseRoomState, Player, User } from "./schema/Schemas";
-import { checkEatPlayer, checkEatItem , checkPlayerOutOfBounds} from "./AntiCheat";
+import { BaseRoomState, User } from "./schema/Schemas";
+import { checkEatPlayer, checkEatItem, checkPlayerOutOfBounds } from "./AntiCheat";
 
-export class BaseRoom extends Room<BaseRoomState> {
-  maxClients = 4;
-  state = new BaseRoomState();
-  onCreate(options: any) {
-
+export abstract class BaseRoom extends Room<BaseRoomState> {
+  onCreate(_options: any) {
     this.onMessage("move", (client, message) => {
       const player = this.state.players.get(client.sessionId);
       if (player) {
         if (checkPlayerOutOfBounds(message.x, message.y, player.radius, this.state.map)) {
+          console.log(`Player ${player.id} moved out of bounds to (x: ${message.x}, y: ${message.y}), r: ${player.radius}`);
+          client.error(400, "Movement out of bounds detected");
           return;
         }
         else {
@@ -18,8 +17,8 @@ export class BaseRoom extends Room<BaseRoomState> {
           player.y = message.y;
           for (const item of this.state.items.values()) {
             if (checkEatItem(item, player)) {
-              player.radius += item.width * 0.2;
-              player.score += item.width / 2;
+              player.radius += .1;
+              player.score += item.width;
               this.state.items.delete(item.id);
             }
           }
