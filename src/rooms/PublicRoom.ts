@@ -4,13 +4,14 @@ import { startGame } from './InitGame';
 import { Client } from 'colyseus';
 
 export class PublicRoom extends BaseRoom {
-    public max_player: number;
+    declare state: PublicRoomState;
 
     onCreate(options: any) {
-        super.onCreate(options);
         this.state = new PublicRoomState();
-        this.max_player = 4;
+        super.onCreate(options);
+        this.state.max_player = 4;
     }
+
     onJoin(client: Client, options: any) {
         console.log(client.sessionId, "joined!");
     
@@ -19,7 +20,7 @@ export class PublicRoom extends BaseRoom {
         newUser.name = options.name || "Guest";
     
         this.state.users.set(client.sessionId, newUser);
-        if (this.state.users.size >= this.max_player) {
+        if (this.state.users.size >= this.state.max_player) {
             startGame(this);
         }
     }
