@@ -1,4 +1,5 @@
 import { Schema, MapSchema, type } from "@colyseus/schema";
+import { Delayed } from "colyseus";
 
 export class Item extends Schema {
   @type("string") id: string;
@@ -30,7 +31,7 @@ export class User extends Schema {
   @type("string") name: string;
 }
 
-export class BaseRoomState extends Schema {
+export abstract class BaseRoomState extends Schema {
   @type({ map: User }) users = new MapSchema<User>();
   @type({ map: Player }) players = new MapSchema<Player>();
   @type({ map: Item }) items = new MapSchema<Item>();
@@ -43,4 +44,7 @@ export class PrivateRoomState extends BaseRoomState{
 }
 export class PublicRoomState extends BaseRoomState{
   @type("number") max_player: number;
+  @type("number") time_before_begin: number;
+  @type("number") start_timer: number;
+
 }
