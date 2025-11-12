@@ -20,6 +20,10 @@ export abstract class BaseRoom extends Room<BaseRoomState> {
               player.radius += .1;
               player.score += item.width;
               this.state.items.delete(item.id);
+              this.broadcast("itemConsumed", {
+                consumedItemId: item.id,
+                consumingPlayerId: player.id,
+              });
             }
           }
           for (const otherPlayer of this.state.players.values()) {
@@ -28,6 +32,10 @@ export abstract class BaseRoom extends Room<BaseRoomState> {
                 player.radius += otherPlayer.radius * 0.2;
                 player.score += otherPlayer.score;
                 otherPlayer.isAlive = false;
+                this.broadcast("playerEliminated", {
+                  eliminatedPlayerId: otherPlayer.id,
+                  eliminatingPlayerId: player.id,
+                });
               }
             }
           }

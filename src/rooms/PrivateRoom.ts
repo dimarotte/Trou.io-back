@@ -18,6 +18,7 @@ export class PrivateRoom extends BaseRoom {
                 startGame(this);
             } else {
                 console.log(`Unauthorized startGame attempt by ${user?.name}(${user?.id})`);
+                client.error(403, "Unauthorized");
             }
         });
     }
