@@ -6,7 +6,7 @@ import { Client, Delayed } from 'colyseus';
 export class PublicRoom extends BaseRoom {
     declare state: PublicRoomState;
     private timer: Delayed;
-    static readonly time_before_begin: number = 1000;
+    static readonly time_before_begin: number = 30 * 1000;
 
     onCreate(options: any) {
         this.state = new PublicRoomState();
