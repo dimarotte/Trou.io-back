@@ -141,6 +141,8 @@ export function startGame(baseroom: BaseRoom) {
         player.y = pos.y;
     }
     baseroom.startAutoStopTimer();
+    const date = new Date();
+    baseroom.state.game_start_time = Math.floor(date.getTime() / 1000);
 }
 
 function generateSizeDistribution(): number {

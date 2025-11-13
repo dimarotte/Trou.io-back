@@ -2,14 +2,6 @@ import { Room, Client } from "@colyseus/core";
 import { BaseRoomState, RoomEtat, User } from "./schema/Schemas";
 import { checkEatPlayer, checkEatItem, checkPlayerOutOfBounds } from "./AntiCheat";
 
-
-function stopGame(baseroom: BaseRoom) {
-  baseroom.state.items.clear();
-  baseroom.state.players.clear();
-  baseroom.state.etat = RoomEtat.ENDED;
-  console.log("Game Ended in room:", baseroom.roomId);
-}
-
 export abstract class BaseRoom extends Room<BaseRoomState> {
   onCreate(_options: any) {
     this.onMessage("move", (client, message) => {
@@ -88,8 +80,17 @@ export abstract class BaseRoom extends Room<BaseRoomState> {
     console.log("room", this.roomId, "disposing...");
   }
 
-  //Ferme la room et stoppe le jeu au bout de 5 minutes
+  private stopGame(baseroom: BaseRoom) {
+    baseroom.state.items.clear();
+    baseroom.state.players.clear();
+    baseroom.state.etat = RoomEtat.ENDED;
+    console.log("Game Ended in room:", baseroom.roomId);
+  }
+
+  private auto_stop_timer: number = 5 * 60 * 1000;
+
   startAutoStopTimer() {
-    this.clock.setTimeout(stopGame, 5 * 60 * 1000, this);
+    this.clock.setTimeout(this.stopGame, this.auto_stop_timer, this);
+    this.state.auto_stop_time = this.auto_stop_timer / 1000;
   }
 }
