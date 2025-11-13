@@ -140,6 +140,7 @@ export function startGame(baseroom: BaseRoom) {
         player.x = pos.x;
         player.y = pos.y;
     }
+    baseroom.startAutoStopTimer();
 }
 
 function generateSizeDistribution(): number {
