@@ -1,5 +1,5 @@
 import { Room, Client } from "@colyseus/core";
-import { BaseRoomState, User } from "./schema/Schemas";
+import { BaseRoomState, RoomEtat, User } from "./schema/Schemas";
 import { checkEatPlayer, checkEatItem, checkPlayerOutOfBounds } from "./AntiCheat";
 import { addItem } from "./InitGame";
 
@@ -84,7 +84,7 @@ export abstract class BaseRoom extends Room<BaseRoomState> {
 
     // Si la reconnexion échoue ou si le client a consenti à partir
     this.state.users.delete(client.sessionId);
-    if (this.state.etat === "playing" && this.state.players.has(client.sessionId)) {
+    if (this.state.etat === RoomEtat.INGAME && this.state.players.has(client.sessionId)) {
       this.state.players.delete(client.sessionId);
     }
   }

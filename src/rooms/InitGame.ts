@@ -1,6 +1,6 @@
 import { distance } from "./AntiCheat";
 import { BaseRoom } from "./BaseRoom";
-import { Item, Player } from "./schema/Schemas"
+import { Item, Player, RoomEtat } from "./schema/Schemas"
 
 
 function getRandomInt(min: number, max: number): number {
@@ -122,6 +122,7 @@ export function addItem(id: string, BaseRoom: BaseRoom) { //fonction qui ajoute 
 
 export function startGame(baseroom: BaseRoom) {
     baseroom.lock();
+    baseroom.state.etat = RoomEtat.INGAME;
     for (const user of baseroom.state.users.values()) {
         const newPlayer = new Player();
         newPlayer.id = user.id;
