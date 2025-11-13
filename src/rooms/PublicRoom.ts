@@ -13,7 +13,7 @@ export class PublicRoom extends BaseRoom {
         super.onCreate(options);
         this.state.max_player = 4;
         this.timer = this.clock.setTimeout(startGame, PublicRoom.time_before_begin, this);
-        this.state.time_before_begin = PublicRoom.time_before_begin;
+        this.state.time_before_begin = PublicRoom.time_before_begin / 1000;
         const date = new Date();
         this.state.start_timer = Math.floor(date.getTime() / 1000);
     }

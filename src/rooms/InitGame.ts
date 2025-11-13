@@ -143,6 +143,8 @@ export function startGame(baseroom: BaseRoom) {
     // Changer l'état de la salle en "playing" après l'initialisation
     baseroom.state.etat = RoomEtat.INGAME;
     baseroom.startAutoStopTimer();
+    const date = new Date();
+    baseroom.state.game_start_time = Math.floor(date.getTime() / 1000);
 }
 
 function generateSizeDistribution(): number {

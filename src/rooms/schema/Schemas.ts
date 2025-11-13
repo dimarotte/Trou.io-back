@@ -42,6 +42,8 @@ export abstract class BaseRoomState extends Schema {
   @type({ map: Item }) items = new MapSchema<Item>();
   @type(Map) map = new Map();
   @type("string") etat: RoomEtat = RoomEtat.WAITING;
+  @type("number") game_start_time: number;
+  @type("number") auto_stop_time: number;
 }
 
 export class PrivateRoomState extends BaseRoomState {
