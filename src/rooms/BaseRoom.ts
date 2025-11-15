@@ -1,22 +1,32 @@
 import { Room, Client } from "@colyseus/core";
 import { BaseRoomState, User } from "./schema/Schemas";
 import { checkEatPlayer, checkEatItem, checkPlayerOutOfBounds } from "./AntiCheat";
+import { addItem } from "./InitGame";
 
 export abstract class BaseRoom extends Room<BaseRoomState> {
   onCreate(_options: any) {
     this.onMessage("move", (client, message) => {
       const player = this.state.players.get(client.sessionId);
       if (player) {
-        if (checkPlayerOutOfBounds(message.x, message.y, player.radius, this.state.map)) {
-          console.log(`Player ${player.id} moved out of bounds to (x: ${message.x}, y: ${message.y}), r: ${player.radius}`);
+        const x = Number(message.x);
+        const y = Number(message.y);
+
+        if (Number.isNaN(x) || Number.isNaN(y)) {
+          client.error(400, "Invalid coordinates");
+          return;
+        }
+
+        if (checkPlayerOutOfBounds(x, y, player.radius, this.state.map)) {
+          console.log(`Player ${player.id} moved out of bounds to (x: ${message.x}, y: ${message.y}), r: ${player.radius} mapw: ${this.state.map.max_width} maph: ${this.state.map.max_height}`);
           client.error(400, "Movement out of bounds detected");
           return;
         }
         else {
-          player.x = message.x;
-          player.y = message.y;
+          player.x = x;
+          player.y = y;
           for (const item of this.state.items.values()) {
             if (checkEatItem(item, player)) {
+              var id=item.id;
               player.radius += .1;
               player.score += item.width;
               this.state.items.delete(item.id);
@@ -24,6 +34,7 @@ export abstract class BaseRoom extends Room<BaseRoomState> {
                 consumedItemId: item.id,
                 consumingPlayerId: player.id,
               });
+              addItem(id, this);
             }
           }
           for (const otherPlayer of this.state.players.values()) {

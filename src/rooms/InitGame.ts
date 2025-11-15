@@ -107,7 +107,7 @@ function randomColor(): string {
     const index = getRandomInt(0, PALETTES.length - 1);
     return PALETTES[index][getRandomInt(0, PALETTES[index].length - 1)];
 }
-function addItem(id: string, BaseRoom: BaseRoom) { //fonction qui ajoute un item a mapschema -> taille random et position random (grace a randompos())
+export function addItem(id: string, BaseRoom: BaseRoom) { //fonction qui ajoute un item a mapschema -> taille random et position random (grace a randompos())
     const item = new Item();
     item.id = id;
     item.color = randomColor();
