@@ -135,6 +135,7 @@ export function startGame(baseroom: BaseRoom) {
     for (let i = 0; i < maxcube; i++) {
         addItem(i.toString(), baseroom);
     }
+    baseroom.nextItemId = maxcube;
     for (const player of baseroom.state.players.values()) {
         const pos = randompos(baseroom, player.radius * 2, player.radius * 2); // verifie le carré englobant du joueur
         player.x = pos.x;

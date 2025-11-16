@@ -4,6 +4,8 @@ import { checkEatPlayer, checkEatItem, checkPlayerOutOfBounds } from "./AntiChea
 import { addItem } from "./InitGame";
 
 export abstract class BaseRoom extends Room<BaseRoomState> {
+  nextItemId: number = 0;
+
   onCreate(_options: any) {
     this.onMessage("move", (client, message) => {
       const player = this.state.players.get(client.sessionId);
@@ -26,7 +28,6 @@ export abstract class BaseRoom extends Room<BaseRoomState> {
           player.y = y;
           for (const item of this.state.items.values()) {
             if (checkEatItem(item, player)) {
-              var id=item.id;
               player.radius += .1;
               player.score += item.width;
               this.state.items.delete(item.id);
@@ -34,7 +35,8 @@ export abstract class BaseRoom extends Room<BaseRoomState> {
                 consumedItemId: item.id,
                 consumingPlayerId: player.id,
               });
-              addItem(id, this);
+              addItem(this.nextItemId.toString(), this);
+              this.nextItemId++;
             }
           }
           for (const otherPlayer of this.state.players.values()) {
