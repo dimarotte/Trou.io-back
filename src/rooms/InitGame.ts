@@ -122,7 +122,6 @@ export function addItem(id: string, BaseRoom: BaseRoom) { //fonction qui ajoute 
 
 export function startGame(baseroom: BaseRoom) {
     baseroom.lock();
-    baseroom.state.etat = "playing";
     for (const user of baseroom.state.users.values()) {
         const newPlayer = new Player();
         newPlayer.id = user.id;
@@ -141,6 +140,8 @@ export function startGame(baseroom: BaseRoom) {
         player.x = pos.x;
         player.y = pos.y;
     }
+    // Changer l'état de la salle en "playing" après l'initialisation
+    baseroom.state.etat = "playing";
 }
 
 function generateSizeDistribution(): number {
