@@ -21,7 +21,7 @@ export class PrivateRoom extends BaseRoom {
                 client.error(403, "Unauthorized");
             }
         });
-        this.onMessage("restartgame", (client, message) => {
+        this.onMessage("restartGame", (client, message) => {
             const user = this.state.users.get(client.sessionId);
             if (user === this.state.owner && (this.state.etat == RoomEtat.ENDED || this.state.etat == RoomEtat.INGAME)) {
                 this.state.items.clear();
