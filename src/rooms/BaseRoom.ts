@@ -1,10 +1,11 @@
 import { Room, Client } from "@colyseus/core";
-import { BaseRoomState, User } from "./schema/Schemas";
+import { BaseRoomState, RoomEtat, User } from "./schema/Schemas";
 import { checkEatPlayer, checkEatItem, checkPlayerOutOfBounds } from "./AntiCheat";
 import { addItem } from "./InitGame";
 
 export abstract class BaseRoom extends Room<BaseRoomState> {
   nextItemId: number = 0;
+  private auto_stop_timer: number = 5 * 60 * 1000;
 
   onCreate(_options: any) {
     this.onMessage("move", (client, message) => {
@@ -84,12 +85,24 @@ export abstract class BaseRoom extends Room<BaseRoomState> {
 
     // Si la reconnexion échoue ou si le client a consenti à partir
     this.state.users.delete(client.sessionId);
-    if (this.state.etat === "playing" && this.state.players.has(client.sessionId)) {
+    if (this.state.etat === RoomEtat.INGAME && this.state.players.has(client.sessionId)) {
       this.state.players.delete(client.sessionId);
     }
   }
 
   onDispose() {
     console.log("room", this.roomId, "disposing...");
+    this.state.items.clear();
+    this.state.players.clear();
+  }
+
+  private stopGame() {
+    this.state.etat = RoomEtat.ENDED;
+    console.log("Game Ended in room:", this.roomId);
+  }
+
+  startAutoStopTimer() {
+    this.clock.setTimeout(this.stopGame, this.auto_stop_timer, this);
+    this.state.auto_stop_time = this.auto_stop_timer / 1000;
   }
 }
