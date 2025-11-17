@@ -5,6 +5,7 @@ import { addItem } from "./InitGame";
 
 export abstract class BaseRoom extends Room<BaseRoomState> {
   nextItemId: number = 0;
+  private auto_stop_timer: number = 5 * 60 * 1000;
 
   onCreate(_options: any) {
     this.onMessage("move", (client, message) => {
@@ -91,16 +92,14 @@ export abstract class BaseRoom extends Room<BaseRoomState> {
 
   onDispose() {
     console.log("room", this.roomId, "disposing...");
+    this.state.items.clear();
+    this.state.players.clear();
   }
 
-  private stopGame(baseroom: BaseRoom) {
-    baseroom.state.items.clear();
-    baseroom.state.players.clear();
-    baseroom.state.etat = RoomEtat.ENDED;
-    console.log("Game Ended in room:", baseroom.roomId);
+  private stopGame() {
+    this.state.etat = RoomEtat.ENDED;
+    console.log("Game Ended in room:", this.roomId);
   }
-
-  private auto_stop_timer: number = 5 * 60 * 1000;
 
   startAutoStopTimer() {
     this.clock.setTimeout(this.stopGame, this.auto_stop_timer, this);
