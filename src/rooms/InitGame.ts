@@ -1,6 +1,6 @@
 import { distance } from "./AntiCheat";
 import { BaseRoom } from "./BaseRoom";
-import { Item, Player } from "./schema/Schemas"
+import { Item, Player, RoomEtat } from "./schema/Schemas"
 
 
 function getRandomInt(min: number, max: number): number {
@@ -141,7 +141,10 @@ export function startGame(baseroom: BaseRoom) {
         player.y = pos.y;
     }
     // Changer l'état de la salle en "playing" après l'initialisation
-    baseroom.state.etat = "playing";
+    baseroom.state.etat = RoomEtat.INGAME;
+    baseroom.startAutoStopTimer();
+    const date = new Date();
+    baseroom.state.game_start_time = Math.floor(date.getTime() / 1000);
 }
 
 function generateSizeDistribution(): number {

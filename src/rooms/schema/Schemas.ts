@@ -1,5 +1,10 @@
 import { Schema, MapSchema, type } from "@colyseus/schema";
-import { Delayed } from "colyseus";
+
+export enum RoomEtat {
+  WAITING = "waiting",
+  INGAME = "playing",
+  ENDED = "finished"
+}
 
 export class Item extends Schema {
   @type("string") id: string;
@@ -36,15 +41,16 @@ export abstract class BaseRoomState extends Schema {
   @type({ map: Player }) players = new MapSchema<Player>();
   @type({ map: Item }) items = new MapSchema<Item>();
   @type(Map) map = new Map();
-  @type("string") etat: string = "waiting"; 
+  @type("string") etat: RoomEtat = RoomEtat.WAITING;
+  @type("number") game_start_time: number;
+  @type("number") auto_stop_time: number;
 }
 
-export class PrivateRoomState extends BaseRoomState{
-   @type(User) owner: User | null = null;
+export class PrivateRoomState extends BaseRoomState {
+  @type(User) owner: User | null = null;
 }
-export class PublicRoomState extends BaseRoomState{
+export class PublicRoomState extends BaseRoomState {
   @type("number") max_player: number;
   @type("number") time_before_begin: number;
   @type("number") start_timer: number;
-
 }
