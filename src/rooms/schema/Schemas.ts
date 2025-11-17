@@ -22,8 +22,8 @@ export class Player extends Schema {
 }
 
 export class Map extends Schema {
-  @type("number") max_height: number = 1000;
-  @type("number") max_width: number = 1000;
+  @type("number") height: number = 1000;
+  @type("number") width: number = 1000;
 }
 
 export class User extends Schema {

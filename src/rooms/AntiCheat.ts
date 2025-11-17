@@ -24,7 +24,7 @@ export function checkEatItem(item: Item, player: Player): boolean {
 }
 
 export function checkPlayerOutOfBounds(x: number, y: number, radius: number, map: Map): boolean {
-    if (x - radius < 0 || x + radius > map.max_width || y - radius < 0 || y + radius > map.max_height) {
+    if (x - radius < 0 || x + radius > map.width || y - radius < 0 || y + radius > map.height) {
         return true;
     }
     return false;

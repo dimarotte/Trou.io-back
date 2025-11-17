@@ -19,7 +19,7 @@ export abstract class BaseRoom extends Room<BaseRoomState> {
         }
 
         if (checkPlayerOutOfBounds(x, y, player.radius, this.state.map)) {
-          console.log(`Player ${player.id} moved out of bounds to (x: ${x}, y: ${y}), r: ${player.radius} mapw: ${this.state.map.max_width} maph: ${this.state.map.max_height}`);
+          console.log(`Player ${player.id} moved out of bounds to (x: ${x}, y: ${y}), r: ${player.radius} mapw: ${this.state.map.width} maph: ${this.state.map.height}`);
           client.error(400, "Movement out of bounds detected");
           return;
         }
