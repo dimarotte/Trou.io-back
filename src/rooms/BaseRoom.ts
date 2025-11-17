@@ -1,6 +1,6 @@
 import { Room, Client } from "@colyseus/core";
 import { BaseRoomState, User } from "./schema/Schemas";
-import { checkEatPlayer, checkEatItem, checkPlayerOutOfBounds } from "./AntiCheat";
+import { checkEatPlayer, checkEatItem, checkPlayerOutOfBounds,checkTeleportation } from "./AntiCheat";
 import { addItem } from "./InitGame";
 
 export abstract class BaseRoom extends Room<BaseRoomState> {
@@ -19,13 +19,18 @@ export abstract class BaseRoom extends Room<BaseRoomState> {
         }
 
         if (checkPlayerOutOfBounds(x, y, player.radius, this.state.map)) {
-          console.log(`Player ${player.id} moved out of bounds to (x: ${message.x}, y: ${message.y}), r: ${player.radius} mapw: ${this.state.map.max_width} maph: ${this.state.map.max_height}`);
+          console.log(`Player ${player.id} moved out of bounds to (x: ${x}, y: ${y}), r: ${player.radius} mapw: ${this.state.map.max_width} maph: ${this.state.map.max_height}`);
           client.error(400, "Movement out of bounds detected");
           return;
         }
         else {
-          player.x = x;
-          player.y = y;
+          if (checkTeleportation(player.x,player.y,x,y)){
+            console.log(`Player ${player.id} tried teleporting to (${x}, ${y}) from (${player.x}, ${player.y})`);
+            client.error(400,"Teleportation detected")
+            return;
+          }
+          player.x=x;
+          player.y=y;
           for (const item of this.state.items.values()) {
             if (checkEatItem(item, player)) {
               player.radius += .1;

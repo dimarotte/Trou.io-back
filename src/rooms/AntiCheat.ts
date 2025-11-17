@@ -29,3 +29,7 @@ export function checkPlayerOutOfBounds(x: number, y: number, radius: number, map
     }
     return false;
 }
+
+export function checkTeleportation(oldx: number, oldy: number, newx: number, newy: number){
+    return (Math.abs(oldx-newx)>30 || Math.abs(oldy-newy)>30); // 30 car c'est la valeur minimale pour ne pas avoir de rollback quand on joue normalement
+}
