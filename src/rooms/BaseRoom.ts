@@ -1,64 +1,83 @@
 import { Room, Client } from "@colyseus/core";
-import { BaseRoomState, RoomEtat, User } from "./schema/Schemas";
-import { checkEatPlayer, checkEatItem, checkPlayerOutOfBounds,checkTeleportation } from "./AntiCheat";
+import { BaseRoomState, Item, Player, RoomEtat, User } from "./schema/Schemas";
+import { checkEatPlayer, checkEatItem, checkPlayerOutOfBounds, checkTeleportation } from "./AntiCheat";
 import { addItem } from "./InitGame";
 
 export abstract class BaseRoom extends Room<BaseRoomState> {
   nextItemId: number = 0;
   private auto_stop_timer: number = 5 * 60 * 1000;
 
+  private eatItem(player: Player, item: Item) {
+    player.radius += .1;
+    player.score += item.width;
+    this.state.items.delete(item.id);
+    this.broadcast("itemConsumed", {
+      consumedItemId: item.id,
+      consumingPlayerId: player.id,
+    });
+  }
+
+  private eatplayer(player: Player, otherPlayer: Player) {
+    player.radius += otherPlayer.radius * 0.2;
+    player.score += otherPlayer.score;
+    otherPlayer.isAlive = false;
+    this.broadcast("playerEliminated", {
+      eliminatedPlayerId: otherPlayer.id,
+      eliminatingPlayerId: player.id,
+    });
+  }
+
   onCreate(_options: any) {
     this.onMessage("move", (client, message) => {
       const player = this.state.players.get(client.sessionId);
-      if (player) {
-        const x = Number(message.x);
-        const y = Number(message.y);
+      if (!player) {
+        console.warn("Player doesn't exist");
+        return;
+      }
 
-        if (Number.isNaN(x) || Number.isNaN(y)) {
-          client.error(400, "Invalid coordinates");
-          return;
-        }
+      const x = Number(message.x);
+      const y = Number(message.y);
 
-        if (checkPlayerOutOfBounds(x, y, player.radius, this.state.map)) {
-          console.log(`Player ${player.id} moved out of bounds to (x: ${x}, y: ${y}), r: ${player.radius} mapw: ${this.state.map.width} maph: ${this.state.map.height}`);
-          client.error(400, "Movement out of bounds detected");
-          return;
-        }
-        else {
-          if (checkTeleportation(player.x,player.y,x,y)){
-            console.log(`Player ${player.id} tried teleporting to (${x}, ${y}) from (${player.x}, ${player.y})`);
-            client.error(400,"Teleportation detected")
-            return;
+      if (Number.isNaN(x) || Number.isNaN(y)) {
+        client.error(400, "Invalid coordinates");
+        return;
+      }
+
+      if (checkPlayerOutOfBounds(x, y, player.radius, this.state.map)) {
+        console.log(`Player ${player.id} moved out of bounds to (x: ${x}, y: ${y}), r: ${player.radius} mapw: ${this.state.map.width} maph: ${this.state.map.height}`);
+        client.error(400, "Movement out of bounds detected");
+        return;
+      }
+
+      if (checkTeleportation(player.x, player.y, x, y)) {
+        console.log(`Player ${player.id} tried teleporting to (${x}, ${y}) from (${player.x}, ${player.y})`);
+        client.error(400, "Teleportation detected")
+        return;
+      }
+
+      player.x = x;
+      player.y = y;
+
+      if (player.isAlive) {
+
+        // vérification item mangé
+        for (const item of this.state.items.values()) {
+          if (checkEatItem(item, player)) {
+            this.eatItem(player, item)
+            addItem(this.nextItemId.toString(), this);
+            this.nextItemId++;
           }
-          player.x=x;
-          player.y=y;
-          for (const item of this.state.items.values()) {
-            if (checkEatItem(item, player)) {
-              player.radius += .1;
-              player.score += item.width;
-              this.state.items.delete(item.id);
-              this.broadcast("itemConsumed", {
-                consumedItemId: item.id,
-                consumingPlayerId: player.id,
-              });
-              addItem(this.nextItemId.toString(), this);
-              this.nextItemId++;
+        }
+
+        // vérification player mangé
+        for (const otherPlayer of this.state.players.values()) {
+          if (otherPlayer.id !== player.id && otherPlayer.isAlive) {
+            if (checkEatPlayer(otherPlayer, player)) {
+              this.eatplayer(player, otherPlayer);
             }
           }
-          for (const otherPlayer of this.state.players.values()) {
-            if (otherPlayer.id !== player.id && otherPlayer.isAlive) {
-              if (checkEatPlayer(otherPlayer, player)) {
-                player.radius += otherPlayer.radius * 0.2;
-                player.score += otherPlayer.score;
-                otherPlayer.isAlive = false;
-                this.broadcast("playerEliminated", {
-                  eliminatedPlayerId: otherPlayer.id,
-                  eliminatingPlayerId: player.id,
-                });
-              }
-            }
-          }
         }
+
       }
     });
 
@@ -77,10 +96,10 @@ export abstract class BaseRoom extends Room<BaseRoomState> {
   async onLeave(client: Client, consented: boolean) {
     console.log(client.sessionId, "left!");
 
-    // Autoriser la reconnexion pendant 60 secondes
+    // Autoriser la reconnexion pendant 2 minutes
     try {
       if (!consented) {
-        await this.allowReconnection(client, 60);
+        await this.allowReconnection(client, 60 * 2);
         console.log(client.sessionId, "reconnected!");
         return;
       }

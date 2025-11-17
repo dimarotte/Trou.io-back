@@ -47,7 +47,7 @@ function hasCollisionWithItems(x: number, y: number, height: number, width: numb
 }
 
 function hasOutOfBounds(x: number, y: number, height: number, width: number, baseroom: BaseRoom): boolean {
-    if (x < 1 || y < 1 || x + width > baseroom.state.map.max_width || y + height > baseroom.state.map.max_height) {
+    if (x < 1 || y < 1 || x + width > baseroom.state.map.width || y + height > baseroom.state.map.height) {
         return true;
     }
     return false;
@@ -59,8 +59,8 @@ function randompos(BaseRoom: BaseRoom, height: number, width: number): { x: numb
     let y: number;
 
     do {
-        x = getRandomInt(0, BaseRoom.state.map.max_width);
-        y = getRandomInt(0, BaseRoom.state.map.max_height);
+        x = getRandomInt(0, BaseRoom.state.map.width);
+        y = getRandomInt(0, BaseRoom.state.map.height);
         notpossible = false;
 
         // Vérifie hors limites
