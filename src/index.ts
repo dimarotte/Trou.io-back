@@ -9,7 +9,8 @@
  * See: https://docs.colyseus.io/server/api/#constructor-options
  */
 import { listen } from "@colyseus/tools";
-
+import { Encoder } from "@colyseus/schema";
+Encoder.BUFFER_SIZE = 16 * 1024; // 16 KB
 // Import Colyseus config
 import app from "./app.config";
 
