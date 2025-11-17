@@ -1,7 +1,7 @@
 import { BaseRoom } from './BaseRoom';
-import { PrivateRoomState } from './schema/Schemas';
+import { PrivateRoomState, RoomEtat } from './schema/Schemas';
 import { startGame } from './InitGame';
-import { Client } from 'colyseus';
+import { Client, Room } from 'colyseus';
 
 export class PrivateRoom extends BaseRoom {
     declare state: PrivateRoomState;
@@ -13,12 +13,20 @@ export class PrivateRoom extends BaseRoom {
 
         this.onMessage("startGame", (client, _message) => {
             const user = this.state.users.get(client.sessionId);
-            if (user === this.state.owner) {
+            if (user === this.state.owner && this.state.etat == RoomEtat.WAITING) {
                 console.log(`Owner ${user.name}(${user.id}) started the game`);
                 startGame(this);
             } else {
                 console.log(`Unauthorized startGame attempt by ${user?.name}(${user?.id})`);
                 client.error(403, "Unauthorized");
+            }
+        });
+        this.onMessage("restartgame", (client, message) => {
+            const user = this.state.users.get(client.sessionId);
+            if (user === this.state.owner && (this.state.etat == RoomEtat.ENDED || this.state.etat == RoomEtat.INGAME)) {
+                this.state.items.clear();
+                this.state.players.clear();
+                this.state.etat = RoomEtat.WAITING
             }
         });
     }
