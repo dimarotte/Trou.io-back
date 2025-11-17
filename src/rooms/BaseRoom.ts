@@ -120,8 +120,8 @@ export abstract class BaseRoom extends Room<BaseRoomState> {
     this.state.players.clear();
   }
 
-  private stopGame() {
-    this.state.etat = RoomEtat.ENDED;
+  private stopGame(baseroom: BaseRoom) {
+    baseroom.state.etat = RoomEtat.ENDED;
     console.log("Game Ended in room:", this.roomId);
   }
 
