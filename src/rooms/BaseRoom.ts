@@ -5,7 +5,7 @@ import { addItem } from "./InitGame";
 
 export abstract class BaseRoom extends Room<BaseRoomState> {
   nextItemId: number = 0;
-  private auto_stop_timer: number = 5 * 60 * 1000;
+  private game_duration: number = 5 * 60 * 1000;
 
   private eatItem(player: Player, item: Item) {
     player.radius += .1;
@@ -126,7 +126,7 @@ export abstract class BaseRoom extends Room<BaseRoomState> {
   }
 
   startAutoStopTimer() {
-    this.clock.setTimeout(this.stopGame, this.auto_stop_timer, this);
-    this.state.auto_stop_time = this.auto_stop_timer / 1000;
+    this.clock.setTimeout(this.stopGame, this.game_duration, this);
+    this.state.game_duration = this.game_duration / 1000;
   }
 }
