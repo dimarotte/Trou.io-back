@@ -24,8 +24,12 @@ export function checkEatItem(item: Item, player: Player): boolean {
 }
 
 export function checkPlayerOutOfBounds(x: number, y: number, radius: number, map: Map): boolean {
-    if (x - radius < 0 || x + radius > map.max_width || y - radius < 0 || y + radius > map.max_height) {
+    if (x - radius < 0 || x + radius > map.width || y - radius < 0 || y + radius > map.height) {
         return true;
     }
     return false;
+}
+
+export function checkTeleportation(oldx: number, oldy: number, newx: number, newy: number){
+    return (Math.abs(oldx-newx)>30 || Math.abs(oldy-newy)>30); // 30 car c'est la valeur minimale pour ne pas avoir de rollback quand on joue normalement
 }
