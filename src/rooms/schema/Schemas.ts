@@ -2,8 +2,8 @@ import { Schema, MapSchema, type } from "@colyseus/schema";
 
 export enum RoomEtat {
   WAITING = "waiting",
-  INGAME = "in_game",
-  ENDED = "ended"
+  INGAME = "playing",
+  ENDED = "finished"
 }
 
 export class Item extends Schema {
