@@ -5,7 +5,7 @@ import { addItem } from "./InitGame";
 
 export abstract class BaseRoom extends Room<BaseRoomState> {
   nextItemId: number = 0;
-  private game_duration: number = 5 * 60 * 1000;
+  private game_duration: number = 0.5 * 60 * 1000;
 
   private eatItem(player: Player, item: Item) {
     player.radius += .1;
@@ -58,7 +58,7 @@ export abstract class BaseRoom extends Room<BaseRoomState> {
       player.x = x;
       player.y = y;
 
-      if (player.isAlive) {
+      if (player.isAlive && this.state.etat == RoomEtat.INGAME) {
 
         // vérification item mangé
         for (const item of this.state.items.values()) {
