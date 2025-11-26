@@ -26,6 +26,7 @@ export class PrivateRoom extends BaseRoom {
             if (user === this.state.owner && (this.state.etat == RoomEtat.ENDED || this.state.etat == RoomEtat.INGAME)) {
                 this.state.items.clear();
                 this.state.players.clear();
+                this.clock.clear();
                 this.state.etat = RoomEtat.WAITING
             }
         });
