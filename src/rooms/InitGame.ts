@@ -28,27 +28,15 @@ function hasCollisionWithPlayers(x: number, y: number, height: number, width: nu
 }
 
 function hasCollisionWithItems(x: number, y: number, height: number, width: number, baseroom: BaseRoom): boolean {
+    // Détection de collision AABB
     for (const item of baseroom.state.items.values()) {
-        if (x === item.x && y === item.y) {
-            return true;
-        }
-        if (x + width === item.x && y === item.y) {
-            return true;
-        }
-        if (x === item.x && y + height === item.y) {
-            return true;
-        }
-        if (x + width === item.x && y + height === item.y) {
-            return true;
-        }
+        // Deux rectangles se chevauchent si leurs projections sur les axes X et Y se chevauchent
+        const overlapX = !(x + width < item.x || x > item.x + item.width);
+        const overlapY = !(y + height < item.y || y > item.y + item.height);
 
-    }
-    return false;
-}
-
-function hasOutOfBounds(x: number, y: number, height: number, width: number, baseroom: BaseRoom): boolean {
-    if (x < 1 || y < 1 || x + width > baseroom.state.map.width || y + height > baseroom.state.map.height) {
-        return true;
+        if (overlapX && overlapY) {
+            return true;
+        }
     }
     return false;
 }
@@ -57,14 +45,16 @@ function randompos(BaseRoom: BaseRoom, height: number, width: number): { x: numb
     let notpossible: boolean;
     let x: number;
     let y: number;
+    const margin = 5; // Marge de sécurité pour éviter les bords
 
     do {
-        x = getRandomInt(0, BaseRoom.state.map.width);
-        y = getRandomInt(0, BaseRoom.state.map.height);
+        // Génère des positions avec une marge pour éviter les bords
+        x = getRandomInt(margin, BaseRoom.state.map.width - width - margin);
+        y = getRandomInt(margin, BaseRoom.state.map.height - height - margin);
         notpossible = false;
 
-        // Vérifie hors limites
-        notpossible = hasOutOfBounds(x, y, height, width, BaseRoom);
+        // // Vérifie hors limites
+        // notpossible = hasOutOfBounds(x, y, height, width, BaseRoom);
 
         // Vérifie collision avec joueurs
         if (!notpossible) {
@@ -80,12 +70,6 @@ function randompos(BaseRoom: BaseRoom, height: number, width: number): { x: numb
 
     return { x, y };
 }
-
-
-function randomPoint(): number {
-    return getRandomInt(5, 20);
-}
-
 
 function deductHeight(point: number): number {
     const height = 2 * point - (point * 0.3);
@@ -108,7 +92,7 @@ function randomColor(): string {
     return PALETTES[index][getRandomInt(0, PALETTES[index].length - 1)];
 }
 export function addItem(id: string, BaseRoom: BaseRoom) { //fonction qui ajoute un item a mapschema -> taille random et position random (grace a randompos())
-    const random =  generateSizeDistribution();
+    const random = generateSizeDistribution();
     const item = new Item();
     item.id = id;
     item.color = randomColor();
@@ -138,6 +122,9 @@ export function startGame(baseroom: BaseRoom) {
     baseroom.nextItemId = maxcube;
     for (const player of baseroom.state.players.values()) {
         const pos = randompos(baseroom, player.radius * 2, player.radius * 2); // verifie le carré englobant du joueur
+        //le point est vérifier pour le coin en haut a gauche on decale donc pour faire correspondre le centre
+        pos.x = pos.x - player.radius;
+        pos.y = pos.y - player.radius;
         player.x = pos.x;
         player.y = pos.y;
     }
@@ -149,13 +136,11 @@ export function startGame(baseroom: BaseRoom) {
 }
 
 function generateSizeDistribution(): number {
-    // distribution des tailles des items
-    // exponentielle de moyenne 10
-    const lambda = 1 / 10; // plus la lambda est grande, plus les valeurs sont petites
-    const u = Math.random();
-    const size = Math.round(-Math.log(1 - u) / lambda);
-    if (size < 5) return 5;
-    if (size > 500) return 20;
+    // distribution inverse exponentielle : beaucoup de petits cubes, peu de gros
+    const min = 4;
+    const max = 50;
+    const exponent = 5; // Plus l'exposant est grand, plus il y a de petites valeurs
+    const size = Math.round(min + (max - min) * Math.pow(Math.random(), exponent));
     return size;
 }
 
