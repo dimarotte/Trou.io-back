@@ -21,6 +21,7 @@ eslint:
 backend_docker:
   stage: docker
   image: docker:28
+  tags: [saas-linux-small-arm64]
   services:
     - name: docker:28-dind
   variables:
@@ -37,7 +38,7 @@ backend_docker:
       VERSION=${CI_COMMIT_TAG:-${CI_COMMIT_SHORT_SHA}}
 
       docker buildx build \
-        --platform linux/amd64,linux/arm64 \
+        --platform linux/arm64 \
         --build-arg NG_CONFIG=production \
         --tag "$CI_REGISTRY_IMAGE/backend:dev" \
         --tag "$CI_REGISTRY_IMAGE/backend:$VERSION" \
