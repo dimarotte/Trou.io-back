@@ -5,7 +5,7 @@ import { addItem } from "./InitGame";
 
 export abstract class BaseRoom extends Room<BaseRoomState> {
   nextItemId: number = 0;
-  private game_duration: number = 0.5 * 60 * 1000;
+  private game_duration: number = 5 * 60 * 1000;
 
   private eatItem(player: Player, item: Item) {
     // Croissance décroissante : plus le joueur est gros, moins il grandit vite

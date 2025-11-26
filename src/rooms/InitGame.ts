@@ -41,13 +41,6 @@ function hasCollisionWithItems(x: number, y: number, height: number, width: numb
     return false;
 }
 
-function hasOutOfBounds(x: number, y: number, height: number, width: number, baseroom: BaseRoom): boolean {
-    if (x < 1 || y < 1 || x + width > baseroom.state.map.width || y + height > baseroom.state.map.height) {
-        return true;
-    }
-    return false;
-}
-
 function randompos(BaseRoom: BaseRoom, height: number, width: number): { x: number; y: number } {
     let notpossible: boolean;
     let x: number;
@@ -78,12 +71,6 @@ function randompos(BaseRoom: BaseRoom, height: number, width: number): { x: numb
     return { x, y };
 }
 
-
-function randomPoint(): number {
-    return getRandomInt(5, 20);
-}
-
-
 function deductHeight(point: number): number {
     const height = 2 * point - (point * 0.3);
     return height;
@@ -105,7 +92,7 @@ function randomColor(): string {
     return PALETTES[index][getRandomInt(0, PALETTES[index].length - 1)];
 }
 export function addItem(id: string, BaseRoom: BaseRoom) { //fonction qui ajoute un item a mapschema -> taille random et position random (grace a randompos())
-    const random =  generateSizeDistribution();
+    const random = generateSizeDistribution();
     const item = new Item();
     item.id = id;
     item.color = randomColor();
@@ -135,6 +122,9 @@ export function startGame(baseroom: BaseRoom) {
     baseroom.nextItemId = maxcube;
     for (const player of baseroom.state.players.values()) {
         const pos = randompos(baseroom, player.radius * 2, player.radius * 2); // verifie le carré englobant du joueur
+        //le point est vérifier pour le coin en haut a gauche on decale donc pour faire correspondre le centre
+        pos.x = pos.x - player.radius;
+        pos.y = pos.y - player.radius;
         player.x = pos.x;
         player.y = pos.y;
     }
