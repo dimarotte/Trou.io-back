@@ -8,8 +8,10 @@ export abstract class BaseRoom extends Room<BaseRoomState> {
   private game_duration: number = 5 * 60 * 1000;
 
   private eatItem(player: Player, item: Item) {
-    player.radius += .1;
-    player.score += item.width;
+    // Croissance décroissante : plus le joueur est gros, moins il grandit vite
+    const growthFactor = 30 + player.radius / 2;
+    player.radius += item.point / growthFactor;
+    player.score += item.point;
     this.state.items.delete(item.id);
     this.broadcast("itemConsumed", {
       consumedItemId: item.id,

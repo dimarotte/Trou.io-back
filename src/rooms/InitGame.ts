@@ -108,12 +108,13 @@ function randomColor(): string {
     return PALETTES[index][getRandomInt(0, PALETTES[index].length - 1)];
 }
 export function addItem(id: string, BaseRoom: BaseRoom) { //fonction qui ajoute un item a mapschema -> taille random et position random (grace a randompos())
+    const random =  generateSizeDistribution();
     const item = new Item();
     item.id = id;
     item.color = randomColor();
-    item.point = generateSizeDistribution();
-    item.height = deductHeight(item.point);
-    item.width = deductWidth(item.point);
+    item.point = random
+    item.height = deductHeight(random);
+    item.width = deductWidth(random);
     const pos = randompos(BaseRoom, item.height, item.width);
     item.x = pos.x;
     item.y = pos.y;
@@ -126,7 +127,7 @@ export function startGame(baseroom: BaseRoom) {
         const newPlayer = new Player();
         newPlayer.id = user.id;
         newPlayer.name = user.name;
-        newPlayer.radius = 20;
+        newPlayer.radius = 15;
         newPlayer.score = 0;
         baseroom.state.players.set(user.id, newPlayer);
     }
