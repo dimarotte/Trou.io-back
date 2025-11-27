@@ -2,7 +2,7 @@ appName: back
 namespace: groupe-trouio
 image:
   repository: registry.gitlab.com/trou.io/colyseusstarter/backend
-  tag: c9055585
+  tag: 08daf400
 service:
   port: 80
 containerPort: 2567
