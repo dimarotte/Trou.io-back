@@ -114,6 +114,7 @@ export function startGame(baseroom: BaseRoom) {
         newPlayer.radius = 15;
         newPlayer.score = 0;
         baseroom.state.players.set(user.id, newPlayer);
+        newPlayer.color = randomColor();
     }
     const maxcube = 200;
     for (let i = 0; i < maxcube; i++) {
