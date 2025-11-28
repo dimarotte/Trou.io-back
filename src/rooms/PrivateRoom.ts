@@ -28,6 +28,7 @@ export class PrivateRoom extends BaseRoom {
                 this.state.players.clear();
                 this.clock.clear();
                 this.state.etat = RoomEtat.WAITING
+                this.unlock();
             }
         });
     }
